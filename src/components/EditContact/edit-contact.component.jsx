@@ -1,10 +1,78 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import ContactService from '../../services/contact-service';
 
+let navigate = useNavigate;
 
 const EditContact = () => {
+
+  const {contactId} = useParams();
+
+  const [state, setState]= useState({
+      loading: false,
+      contact: {        
+        picture: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        phoneNumber: ''
+      },
+      errorMessage: ''
+  });
+
+  async function fetchData() {
+    try {
+      setState({...state, loading: true})
+      let response = await ContactService.getContact(contactId);
+      console.log(response.data)
+      setState({
+        ...state,
+        loading: false,
+        contact: response.data
+      })
+    }catch(error){  
+      setState({
+        ...state,
+        loading: false,
+        errorMessage: error.message
+      })
+    }     
+  }
+
+  useEffect(() => {
+    fetchData();
+  },[]);
+
+  let updateInput = (event) => {
+    setState({
+      ...state,
+      contact:{
+        ...state.contact,
+        [event.target.name]:event.target.value
+      }
+    });
+  }
+
+  let submitForm = async(event) => {
+    event.preventDefault();
+
+    try{
+      const response = await ContactService.updateContact(state.contact, contact.id);
+      if(response){
+        navigate("/");
+      }
+    }catch(error){
+      setState({...state, errorMessage:error.message});
+      navigate(`/contacts/edit/${contact.id}`);
+    }
+
+  }
+
+  let { contact, errorMessage} = state;
+
   return (
     <React.Fragment>
+      <pre>{JSON.stringify(contact)}</pre>
       <section className="add-contact p-3">
         <div className="container">
           <div className="row">
@@ -15,21 +83,51 @@ const EditContact = () => {
           </div>
           <div className="row align-items-center">
             <div className="col-md-4">
-              <form>
+              <form onSubmit={submitForm}>
               <div className="mb-2">
-                  <input type="text" className="form-control" placeholder="Picture url"/>
+                  <input 
+                    required='true'
+                    name="picture"
+                    value={contact.picture}  
+                    onChange={updateInput}
+                    type="text" className="form-control" placeholder="Picture url"
+                  />
                 </div>
                 <div className="mb-2">
-                  <input type="text" className="form-control" placeholder="First Name"/>
+                  <input 
+                    required='true'
+                    name="firstName"
+                    value={contact.firstName}  
+                    onChange={updateInput}
+                    type="text" className="form-control" placeholder="First Name"
+                  />
                 </div>
                 <div className="mb-2">
-                  <input type="text" className="form-control" placeholder="Last Name"/>
+                  <input 
+                    required='true'
+                    name="lastName"
+                    value={contact.lastName}  
+                    onChange={updateInput}
+                    type="text" className="form-control" placeholder="Last Name"
+                  />
                 </div>
                 <div className="mb-2">
-                  <input type="email" className="form-control" placeholder="Email"/>
+                  <input 
+                    required='true'
+                    name="email"
+                    value={contact.email}  
+                    onChange={updateInput}
+                    type="email" className="form-control" placeholder="Email"
+                  />
                 </div>
                 <div className="mb-2">
-                  <input type="number" className="form-control" placeholder="Phone Number"/>
+                  <input 
+                    required='true'
+                    name="phoneNumber"
+                    value={contact.phoneNumber}  
+                    onChange={updateInput}
+                    type="number" className="form-control" placeholder="Phone Number"
+                  />
                 </div>
                 <div className="mb-2">
                   <input type="submit" className="btn btn-primary" value="Update"/>
@@ -40,7 +138,7 @@ const EditContact = () => {
               </form>
             </div>
             <div className="col-md-6">
-              <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRSoImqQEXUJTKa1fIFdOJW7pbnbPP20c2hA&usqp=CAU" alt="" className="contact-img" />
+              <img src={contact.picture} alt="" className="contact-img" />
             </div>
           </div>
         </div>
