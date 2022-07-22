@@ -72,7 +72,6 @@ const EditContact = () => {
 
   return (
     <React.Fragment>
-      <pre>{JSON.stringify(contact)}</pre>
       <section className="add-contact p-3">
         <div className="container">
           <div className="row">
