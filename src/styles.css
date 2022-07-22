@@ -1,0 +1,9 @@
+body {
+    background-color: rgb(245, 231, 160) !important;
+}
+
+.contact-img {
+    width: 200px;
+    height: auto;
+    border-radius: 1rem;
+}

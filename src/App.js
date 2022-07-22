@@ -5,6 +5,7 @@ import ContactList from "./components/ContactList/contact-list.component";
 import AddContact from "./components/AddContact/add-contact.component";
 import ViewContact from "./components/ViewContact/view-contact.component";
 import EditContact from "./components/EditContact/edit-contact.component";
+import './styles.css';
 
 const App = () => {
   return (
